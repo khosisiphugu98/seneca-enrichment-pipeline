@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lead Enrichment Pipeline — Seneca · Khosi</title>
+<style>
+  :root{
+    --ink:#0b1220; --ink-2:#111a2b; --ink-3:#18243a;
+    --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.16);
+    --fg:#eaf0f7; --fg-dim:#9fb0c6; --fg-mute:#6b7d97;
+    --emerald:#34d399; --emerald-deep:#0f9d68;
+    --gold:#f5c451; --sky:#5aa9ff; --rose:#fb7185; --violet:#b79cff;
+    --radius:16px; --shadow:0 24px 60px -20px rgba(0,0,0,.6);
+    --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Fraunces","Georgia",serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--font); color:var(--fg); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 700px at 85% -10%, rgba(90,169,255,.10), transparent 60%),
+      radial-gradient(900px 600px at 5% 110%, rgba(52,211,153,.07), transparent 55%),
+      var(--ink);
+    min-height:100vh; padding:clamp(18px,3.5vw,44px);
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+
+  .kicker{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--sky);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .kicker::before{content:"";width:26px;height:1.5px;background:var(--sky)}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4vw,44px);line-height:1.05;letter-spacing:-.02em;margin-bottom:10px}
+  .lead{font-size:clamp(15px,1.5vw,18px);color:var(--fg-dim);max-width:82ch;font-weight:300;margin-bottom:26px}
+  .lead b{color:var(--fg);font-weight:600}
+  .em{color:var(--emerald)} .go{color:var(--gold)} .sk{color:var(--sky)} .rs{color:var(--rose)} .vi{color:var(--violet)}
+  strong{color:var(--fg);font-weight:600}
+  a{color:var(--sky);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .banner{border-left:2px solid var(--gold);padding:12px 0 12px 16px;margin:0 0 30px;max-width:92ch;font-size:14.5px;color:var(--fg-dim);font-weight:300;line-height:1.6}
+  .banner strong{color:var(--fg)}
+
+  .sectionhead{font-family:var(--serif);font-size:22px;font-weight:600;margin:38px 0 6px}
+  .sectionhead .n{color:var(--fg-mute);font-size:15px;margin-right:8px}
+  .sectionsub{font-size:13.5px;color:var(--fg-mute);font-weight:300;margin-bottom:18px;max-width:88ch;line-height:1.6}
+  .sectionsub b{color:var(--fg-dim);font-weight:600}
+
+  /* ── stat tiles ─────────────────────────────── */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:10px 0 6px}
+  .stat{background:linear-gradient(180deg,var(--ink-2),var(--ink-3));border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+  .stat .big{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--emerald);line-height:1.05;margin-bottom:7px}
+  .stat.v .big{color:var(--violet)} .stat.g .big{color:var(--gold)} .stat.s .big{color:var(--sky)} .stat.r .big{color:var(--rose)}
+  .stat .cap{font-size:12.5px;color:var(--fg-dim);font-weight:300;line-height:1.5}
+  .stat .cap b{color:var(--fg)}
+
+  /* ── the pipeline diagram ───────────────────── */
+  .pipe{display:flex;flex-direction:column;align-items:stretch;margin-top:18px}
+
+  .stage{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:stretch}
+  @media(max-width:860px){.stage{grid-template-columns:1fr}}
+  .stage .rail{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px 14px 16px 0;border-right:2px solid var(--line-2);position:relative}
+  @media(max-width:860px){.stage .rail{border-right:none;border-bottom:2px solid var(--line-2);flex-direction:row;align-items:center;gap:12px;padding:10px 0}}
+  .stage .rail .n{font-family:var(--serif);font-size:30px;line-height:1;color:var(--fg-mute)}
+  .stage .rail .t{font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--fg-dim);font-weight:700;line-height:1.4}
+  .stage .rail .cost{font-size:11px;color:var(--fg-mute);font-weight:600;margin-top:2px}
+  .stage.s0 .rail .n{color:var(--emerald)} .stage.s0 .rail{border-color:rgba(52,211,153,.4)}
+  .stage.s1 .rail .n{color:var(--sky)}     .stage.s1 .rail{border-color:rgba(90,169,255,.4)}
+  .stage.s2 .rail .n{color:var(--gold)}    .stage.s2 .rail{border-color:rgba(245,196,81,.4)}
+  .stage.s3 .rail .n{color:var(--violet)}  .stage.s3 .rail{border-color:rgba(183,156,255,.4)}
+  .stage.s4 .rail .n{color:var(--rose)}    .stage.s4 .rail{border-color:rgba(251,113,133,.4)}
+
+  .stage .cardarea{padding:8px 0 8px}
+  .scard{background:linear-gradient(180deg,var(--ink-2),var(--ink-3));border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow)}
+  .scard h3{font-size:16px;font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .scard .why{font-size:13.5px;color:var(--fg-dim);font-weight:300;line-height:1.6;margin-bottom:4px;max-width:92ch}
+  .scard .why b{color:var(--fg)}
+  .stage.s0 .scard{border-color:rgba(52,211,153,.28)}
+  .stage.s1 .scard{border-color:rgba(90,169,255,.28)}
+  .stage.s2 .scard{border-color:rgba(245,196,81,.28)}
+  .stage.s3 .scard{border-color:rgba(183,156,255,.28)}
+  .stage.s4 .scard{border-color:rgba(251,113,133,.28)}
+
+  .tag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .tag.free{color:var(--emerald);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.35)}
+  .tag.cheap{color:var(--sky);background:rgba(90,169,255,.09);border:1px solid rgba(90,169,255,.35)}
+  .tag.mid{color:var(--gold);background:rgba(245,196,81,.09);border:1px solid rgba(245,196,81,.35)}
+  .tag.human{color:var(--rose);background:rgba(251,113,133,.09);border:1px solid rgba(251,113,133,.35)}
+
+  /* vendor rows inside a stage */
+  .vrows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .vrow{display:grid;grid-template-columns:170px 1fr 130px;gap:14px;align-items:center;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:11px;padding:10px 14px}
+  @media(max-width:760px){.vrow{grid-template-columns:1fr;gap:5px}}
+  .vrow .vname{font-size:13.5px;font-weight:600;color:var(--fg)}
+  .vrow .vname small{display:block;font-size:10.5px;color:var(--fg-mute);font-weight:500;letter-spacing:.03em;margin-top:1px}
+  .vrow .vwhat{font-size:12.5px;color:var(--fg-dim);font-weight:300;line-height:1.5}
+  .vrow .vwhat b{color:var(--fg)}
+  .vrow .vprice{font-family:var(--serif);font-size:16px;color:var(--emerald);font-weight:600;text-align:right;line-height:1.2}
+  .vrow .vprice small{display:block;font-family:var(--font);font-size:10px;color:var(--fg-mute);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+  @media(max-width:760px){.vrow .vprice{text-align:left}}
+  .vrow.dim{opacity:.62}
+  .vrow.dim .vprice{color:var(--fg-mute)}
+
+  /* waterfall connector between vendor rows */
+  .wfall{display:flex;align-items:center;gap:8px;padding-left:22px;font-size:10.5px;color:var(--fg-mute);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+  .wfall::before{content:"↓";color:var(--sky);font-size:13px}
+
+  /* connectors between stages */
+  .conn{display:grid;grid-template-columns:150px 1fr;gap:18px}
+  @media(max-width:860px){.conn{grid-template-columns:1fr}}
+  .conn .spacer{}
+  .conn .arrow{display:flex;align-items:center;gap:12px;padding:10px 0 10px 30px}
+  .conn .arrow .down{font-size:20px;color:var(--fg-mute);line-height:1}
+  .conn .arrow .note{font-size:12px;color:var(--fg-mute);font-weight:500;font-style:italic}
+  .conn .arrow .note b{color:var(--fg-dim);font-style:normal}
+
+  /* the fork / branch chips */
+  .fork{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .fork .branch{flex:1;min-width:250px;border:1px dashed var(--line-2);border-radius:12px;padding:12px 15px}
+  .fork .branch .bt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+  .fork .branch.yes .bt{color:var(--emerald)} .fork .branch.yes{border-color:rgba(52,211,153,.4)}
+  .fork .branch.no .bt{color:var(--sky)} .fork .branch.no{border-color:rgba(90,169,255,.4)}
+  .fork .branch p{font-size:12.5px;color:var(--fg-dim);font-weight:300;line-height:1.55}
+  .fork .branch p b{color:var(--fg)}
+
+  /* output field chips */
+  .fields{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+  .field{font-size:11px;font-weight:600;padding:4px 11px;border-radius:999px;border:1px solid var(--line-2);color:var(--fg-dim);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .field.hot{border-color:rgba(52,211,153,.45);color:var(--emerald);background:rgba(52,211,153,.06)}
+
+  /* input chips at top */
+  .inputs{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 0}
+  .inchip{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line-2);border-radius:12px;padding:10px 16px;background:linear-gradient(180deg,var(--ink-2),var(--ink-3))}
+  .inchip .l{font-size:13.5px;font-weight:600;color:var(--fg)}
+  .inchip .s{font-size:10.5px;color:var(--fg-mute);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  .inchip.some{border-style:dashed;border-color:rgba(245,196,81,.4)}
+  .inchip.some .s{color:var(--gold)}
+
+  /* deeds-office explainer */
+  .def{background:rgba(90,169,255,.05);border:1px solid rgba(90,169,255,.22);border-radius:12px;padding:15px 19px;margin:14px 0 6px;font-size:14px;color:var(--fg-dim);font-weight:300;line-height:1.65;max-width:100ch}
+  .def b{color:var(--sky);font-weight:600}
+  .def .term{color:var(--fg);font-weight:600}
+
+  /* cost bar */
+  .alloc{display:flex;border-radius:12px;overflow:hidden;margin:14px 0 4px;border:1px solid var(--line-2);height:66px}
+  .alloc div{display:flex;flex-direction:column;justify-content:center;padding:0 16px;color:#0b1220;font-weight:700;min-width:0}
+  .alloc .c1{background:linear-gradient(180deg,#34d399,#0f9d68);flex:0 0 18%}
+  .alloc .c2{background:linear-gradient(180deg,#5aa9ff,#3b82f6);flex:0 0 44%}
+  .alloc .c3{background:linear-gradient(180deg,#f5c451,#e0a92e);flex:0 0 26%}
+  .alloc .c4{background:linear-gradient(180deg,#b79cff,#8b6ee8);flex:0 0 12%}
+  .alloc .pct{font-family:var(--serif);font-size:17px;line-height:1.1;white-space:nowrap}
+  .alloc .lb{font-size:10px;font-weight:700;letter-spacing:.03em;opacity:.85;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .allocnote{font-size:12.5px;color:var(--fg-mute);margin-top:8px;line-height:1.6;max-width:95ch}
+  .allocnote b{color:var(--fg-dim)}
+
+  /* sources table */
+  .tbl{width:100%;border-collapse:collapse;margin:6px 0;font-size:13px}
+  .tbl th{text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-mute);font-weight:700;padding:8px 12px;border-bottom:1px solid var(--line-2)}
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--line);color:var(--fg-dim);font-weight:300;line-height:1.5;vertical-align:top}
+  .tbl td b{color:var(--fg)}
+  .tbl tr td:first-child{color:var(--fg);font-weight:500;width:20%}
+
+  .foot{margin-top:30px;font-size:12.5px;color:var(--fg-mute);line-height:1.7;max-width:100ch}
+  .foot b{color:var(--fg-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">Seneca · Growth OS — Layer 1</div>
+  <h1>The Enrichment Pipeline</h1>
+  <p class="lead">Almost every lead arrives as just <b>a name, an email, and a phone number</b> — sometimes an address. In the US, property ownership is <b>public record</b>, so those three fields are enough to reconstruct who this person is, what property they own, and roughly what a cost-seg study is worth to them — <b>before sales ever picks up the phone</b>. Every price below is verified against the vendor's published pricing (July 2026).</p>
+
+  <div class="banner"><strong>Design rule:</strong> a waterfall — cheapest source first, stop at the first confident match, only escalate on a miss. The pipeline <strong>proposes</strong>; it writes structured fields into GoHighLevel. A <strong>human reviews</strong> anything customer-facing or money-moving.</div>
+
+  <!-- headline stats -->
+  <div class="stats">
+    <div class="stat s"><div class="big">3 fields</div><div class="cap">is all we need to start — <b>name, email, phone</b>. Address is a bonus, not a requirement.</div></div>
+    <div class="stat"><div class="big">~$0.20–0.60</div><div class="cap">realistic <b>all-in cost per enriched lead</b>, waterfall-priced, misses mostly free.</div></div>
+    <div class="stat g"><div class="big">3,144</div><div class="cap">US counties, each its own "deeds office." <b>No national registry</b> — which is why aggregators exist.</div></div>
+    <div class="stat v"><div class="big">$171k</div><div class="cap">Seneca's average deduction. Enrichment cost is <b>~0.0003%</b> of the value of one converted lead.</div></div>
+  </div>
+
+  <!-- ────────── WHAT COMES IN ────────── -->
+  <h2 class="sectionhead"><span class="n">→</span>What a lead gives us</h2>
+  <div class="inputs">
+    <div class="inchip"><span class="s">Always</span><span class="l">First + last name</span></div>
+    <div class="inchip"><span class="s">Always</span><span class="l">Email address</span></div>
+    <div class="inchip"><span class="s">Always</span><span class="l">Phone number</span></div>
+    <div class="inchip some"><span class="s">Sometimes</span><span class="l">Property address</span></div>
+  </div>
+
+  <!-- ────────── PIPELINE ────────── -->
+  <div class="pipe">
+
+    <!-- STAGE 0 -->
+    <h2 class="sectionhead"><span class="n">◆</span>The pipeline</h2>
+    <p class="sectionsub">Five stages. Each one adds fields to the lead record in GHL; each escalation costs a little more, so the flow is ordered <b>free → cents → dimes</b>.</p>
+
+    <div class="stage s0">
+      <div class="rail"><span class="n">0</span><span class="t">Ask the form</span><span class="cost">$0.00</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Capture the address at the source <span class="tag free">Free · 100% accurate</span></h3>
+        <p class="why">The cheapest enrichment vendor is <b>the lead themselves</b>. One field on the calculator/form — <b>"property address"</b> — plus property type is $0.00 enrichment with perfect accuracy. If the calculator already collects it, the fix is simply <b>writing it to a GHL custom field instead of dropping it</b>. Everything below exists for leads who skip this field.</p>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note"><b>Fork:</b> do we have an address yet?</span></div></div>
+
+    <div class="stage s1">
+      <div class="rail"><span class="n">1</span><span class="t">Identity resolution</span><span class="cost">~$0.01–0.28 / lead</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Contact info → verified person + postal address <span class="tag cheap">Waterfall · stop on first match</span></h3>
+        <div class="fork">
+          <div class="branch yes"><div class="bt">✓ Address given</div><p><b>Skip this stage entirely.</b> Run only a cheap phone check (line type, $0.008) to filter junk leads, then go straight to Stage 2.</p></div>
+          <div class="branch no"><div class="bt">✗ No address</div><p>Resolve the person from phone + email, cheapest source first:</p></div>
+        </div>
+        <div class="vrows">
+          <div class="vrow">
+            <div class="vname">Twilio Lookup<small>gate + caller name</small></div>
+            <div class="vwhat">Line-type check filters VoIP/burner junk (<b>$0.008</b>); Caller Name confirms the lead is who they say (<b>$0.01</b>). Also raises answer rates for sales.</div>
+            <div class="vprice">$0.008–0.01<small>per request</small></div>
+          </div>
+          <div class="wfall">no confident match — escalate</div>
+          <div class="vrow">
+            <div class="vname">Trestle<small>reverse phone</small></div>
+            <div class="vwhat">Reverse Phone API returns <b>name + current postal address</b> tied to the number. Built exactly for this. (Phone Validation $0.015, Real Contact $0.03 as lighter tiers.)</div>
+            <div class="vprice">$0.07<small>per query</small></div>
+          </div>
+          <div class="wfall">still no address — escalate</div>
+          <div class="vrow">
+            <div class="vname">Endato / EnformionGO<small>skip-trace API</small></div>
+            <div class="vwhat">Pass name + phone + email together → returns <b>full/partial address, phones, emails</b>. This is the skip-tracing infrastructure real-estate investors already use on this exact population. Pay per match only.</div>
+            <div class="vprice">$0.10<small>per match</small></div>
+          </div>
+          <div class="wfall">last resort for high-value leads</div>
+          <div class="vrow">
+            <div class="vname">People Data Labs<small>deep enrichment</small></div>
+            <div class="vwhat">Reverse email/phone → identity, work history, LinkedIn. Priciest, so reserved for leads that <b>score high but still won't resolve</b>. Billed on match only.</div>
+            <div class="vprice">$0.28<small>per match (Pro)</small></div>
+          </div>
+        </div>
+        <div class="fields"><span class="field hot">verified_name</span><span class="field hot">postal_address</span><span class="field">line_type</span><span class="field">phone_valid</span><span class="field">enrichment_confidence</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">~70–85% of leads now have an address or a confident name + state</span></div></div>
+
+    <div class="stage s2">
+      <div class="rail"><span class="n">2</span><span class="t">Property lookup</span><span class="cost">~$0.03–0.10 / lead</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Address or owner name → the property record <span class="tag mid">County assessor + recorder data</span></h3>
+        <div class="def">The <span class="term">"deeds office"</span> Dylan mentioned: in the US there's <b>no national deeds registry</b> — each of the <b>3,144 counties</b> runs its own <span class="term">County Recorder of Deeds</span> (deeds, mortgages, sale prices) and <span class="term">County Assessor</span> (values, tax, characteristics). All public record. Aggregators license and normalize it nationally — <b>ATTOM alone covers recorder data from 2,690+ counties</b>. If Seneca "has access" to one, it's almost certainly PropStream, ATTOM, or DataTree — I'd build on whichever is already paid for.</div>
+        <div class="fork">
+          <div class="branch yes"><div class="bt">✓ Have an address</div><p><b>Direct lookup:</b> owner, year built, sqft, property type, assessed value, tax history, <b>last sale price + date</b>.</p></div>
+          <div class="branch no"><div class="bt">✗ Only name + state</div><p><b>Owner-name search:</b> pull <b>every property this person owns</b> in the state — crucial because the lead's <em>home</em> address is often not the <em>investment</em> property. Area code + IP geo narrow the state.</p></div>
+        </div>
+        <div class="vrows">
+          <div class="vrow">
+            <div class="vname">RentCast API<small>the lean-team pick</small></div>
+            <div class="vwhat">150M+ properties, owner details, tax/assessment history, sale history. <b>Free dev tier (50 req/mo)</b> → $74/mo for 1,000 → $199/mo for 5,000. Real API, no contract — right-sized for current lead volume.</div>
+            <div class="vprice">from $74/mo<small>≈ $0.03–0.07 / lookup</small></div>
+          </div>
+          <div class="vrow">
+            <div class="vname">PropStream<small>likely already in-house</small></div>
+            <div class="vwhat">$99/mo Essentials, nationwide records, <b>owner-name search</b>, 10k exports/mo, built-in skip tracing at $0.12–0.15/record. UI + exports rather than a true API — fine for a VA-assisted or batch workflow.</div>
+            <div class="vprice">$99/mo<small>essentials plan</small></div>
+          </div>
+          <div class="vrow">
+            <div class="vname">ATTOM Data<small>the scale-up path</small></div>
+            <div class="vwhat">158M properties, assessor + recorder + <b>owner-name search API</b>, multi-property portfolios. Enterprise pricing, <b>30-day free trial</b> — the upgrade once volume justifies it, not the day-one choice.</div>
+            <div class="vprice">enterprise<small>30-day trial</small></div>
+          </div>
+          <div class="vrow dim">
+            <div class="vname">BatchData<small>only at real scale</small></div>
+            <div class="vwhat">Excellent data but plans start ~<b>$1k–2k/mo for 100k records</b> ($0.02/record). Wrong shape for current volume — revisit if lead flow 10×'s.</div>
+            <div class="vprice">$1k+/mo<small>volume plans</small></div>
+          </div>
+        </div>
+        <div class="fields"><span class="field hot">property_type</span><span class="field hot">assessed_value</span><span class="field hot">last_sale_price</span><span class="field hot">last_sale_date</span><span class="field">year_built</span><span class="field">sqft</span><span class="field">portfolio_count</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">the cost-seg-specific layer most pipelines don't have</span></div></div>
+
+    <div class="stage s3">
+      <div class="rail"><span class="n">3</span><span class="t">Entity + basis</span><span class="cost">~$0.00 (public records)</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Find the LLC, estimate the deduction <span class="tag free">Mostly free public data</span></h3>
+        <p class="why">Investment property is usually held in an <b>LLC</b>, so an owner-name search on the person can miss the real asset. Person name → <b>state Secretary of State business search</b> (free on every state's website) → LLC names → re-run Stage 2 with <b>the LLC as owner</b>. That's how a Gmail address becomes a $2M apartment building. <em>(Note: OpenCorporates aggregates all states but its commercial API starts ~£2,250/yr — state SoS sites are free, so start there.)</em></p>
+        <p class="why" style="margin-top:8px"><b>Then the payoff:</b> the deed's <b>last sale price + date is a basis proxy</b> → apply Seneca's own cost-seg math → <span class="em"><b>estimated deduction, pre-computed before first contact</b></span>. The sales handoff becomes a <b>context card, not a name</b>: <em>"Marcus, 2 LLCs, 3 properties, ~$1.8M combined basis, est. $410k first-year deduction."</em></p>
+        <div class="fields"><span class="field hot">entity_name</span><span class="field hot">est_basis</span><span class="field hot">est_deduction</span><span class="field">entity_state</span><span class="field">properties_found</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">everything lands back in the existing stack — no new tools for the team</span></div></div>
+
+    <div class="stage s4">
+      <div class="rail"><span class="n">4</span><span class="t">GHL write-back</span><span class="cost">human-gated</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Structured fields → scoring → routing → human approval <span class="tag human">AI proposes · human decides</span></h3>
+        <p class="why">GHL inbound webhook fires on new lead → the waterfall runs (a small middleware service or Make/n8n scenario) → results written to <b>GHL custom fields</b> via API. From there it's native GHL: a <b>fit × readiness score</b> routes the lead — high-fit to sales <em>with the context card</em>, mid-fit into the segmented nurture that <b>feeds the existing nurture AI better inputs</b>, junk (VoIP/no-match/no-property) suppressed so nobody wastes a dial. <b>Every estimated deduction is reviewed by a human before it appears in anything a lead sees.</b></p>
+        <div class="fields"><span class="field hot">lead_score</span><span class="field hot">route</span><span class="field">reviewed_by</span><span class="field">suppress_reason</span></div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <!-- ────────── COST ────────── -->
+  <h2 class="sectionhead"><span class="n">$</span>What a fully enriched lead costs</h2>
+  <p class="sectionsub">Worst-case path (no address given, escalated to skip trace, property + entity lookups). Most leads resolve cheaper — and misses at each tier are mostly free or match-billed.</p>
+  <div class="alloc">
+    <div class="c1"><span class="pct">$0.02</span><span class="lb">Phone gate</span></div>
+    <div class="c2"><span class="pct">$0.07–0.28</span><span class="lb">Identity waterfall</span></div>
+    <div class="c3"><span class="pct">$0.03–0.10</span><span class="lb">Property lookup</span></div>
+    <div class="c4"><span class="pct">~$0</span><span class="lb">Entity/SoS</span></div>
+  </div>
+  <p class="allocnote"><b>≈ $0.12–0.40 typical, ~$0.60 absolute worst case</b> — against a service whose <b>average deduction is $171k</b>. If enrichment lifts lead→booked-call conversion by even a single point, it pays for itself thousands of times over. Fixed floor: RentCast $74/mo + (optionally) PropStream $99/mo already in-house.</p>
+
+  <!-- ────────── SOURCES ────────── -->
+  <h2 class="sectionhead"><span class="n">✓</span>Sources — every number above, verified</h2>
+  <p class="sectionsub">Vendor-published pricing as of <b>July 2026</b>. Pricing pages change; re-verify before committing budget.</p>
+  <table class="tbl">
+    <tr><th>Claim</th><th>Verified figure</th><th>Source</th></tr>
+    <tr><td>Twilio Lookup</td><td>Line Type Intelligence <b>$0.008</b>/req · Caller Name <b>$0.01</b>/req · basic validation free</td><td><a href="https://www.twilio.com/en-us/user-authentication-identity/pricing/lookup">twilio.com — Lookup pricing</a></td></tr>
+    <tr><td>Trestle</td><td>Reverse Phone <b>$0.07</b>/query · Phone Validation $0.015 · Real Contact $0.03 (self-serve)</td><td><a href="https://trestleiq.com/pricing/">trestleiq.com/pricing</a></td></tr>
+    <tr><td>Endato / EnformionGO</td><td>Contact enrichment <b>$0.10 per match</b>, no minimums or contracts; returns name, phone, email, full/partial address</td><td><a href="https://endato.com/pricing/">endato.com/pricing</a></td></tr>
+    <tr><td>People Data Labs</td><td><b>$0.28/credit</b> Pro tier (as low as $0.20 annual); billed on successful match only; 100 free/mo</td><td><a href="https://www.peopledatalabs.com/pricing/person">peopledatalabs.com/pricing</a></td></tr>
+    <tr><td>RentCast API</td><td>Free 50 req/mo · <b>$74/mo → 1,000</b> · $199/mo → 5,000 · $449/mo → 25,000; 150M+ properties, owner details, tax + sale history</td><td><a href="https://www.rentcast.io/api">rentcast.io/api</a></td></tr>
+    <tr><td>PropStream</td><td>Essentials <b>$99/mo</b> (10k exports) · Pro $199 · skip tracing <b>$0.12–0.15/record</b></td><td><a href="https://www.propstream.com/pricing">propstream.com/pricing</a></td></tr>
+    <tr><td>ATTOM Data</td><td>158M properties; assessor + recorder + <b>owner-name search</b>; recorder data from <b>2,690+ counties</b>; 30-day API trial; enterprise pricing</td><td><a href="https://www.attomdata.com/data/property-ownership-data/owner-names/">attomdata.com — owner names</a> · <a href="https://www.attomdata.com/data/transactions-mortgage-data/recorder-data/">recorder data</a></td></tr>
+    <tr><td>BatchData</td><td>Skip-trace plans from <b>~$1,000–2,000/mo for 100k records</b> ($0.02/rec, down to $0.0066 at 3M)</td><td><a href="https://batchdata.io/pricing">batchdata.io/pricing</a></td></tr>
+    <tr><td>County system</td><td><b>3,144 counties</b> & equivalents; <b>3,000+ recorder offices</b>; no national registry; records are public</td><td><a href="https://www.levelset.com/mechanics-lien/all-usa-county-recorders-offices/">levelset.com — county recorders</a> · <a href="https://www.countyoffice.org/recorder-of-deeds/">countyoffice.org</a></td></tr>
+    <tr><td>LLC lookup</td><td>State Secretary of State searches <b>free</b>; OpenCorporates commercial API from <b>£2,250/yr</b></td><td><a href="https://opencorporates.com/pricing/">opencorporates.com/pricing</a></td></tr>
+  </table>
+
+  <div class="foot">
+    <b>Open question for the team:</b> Dylan mentioned existing access to a property-records source — which one? The pipeline slots in <b>whatever is already paid for</b> at Stage 2; nothing here requires a new platform, and the whole flow runs on GHL webhooks + custom fields the team already lives in. <b>Compliance note:</b> skip-trace / identity data is for internal lead qualification only (GLBA/DPPA permissible-use terms apply) — it never auto-sends anything to a lead; a human approves all outbound.
+  </div>
+
+</div>
+</body>
+</html>
