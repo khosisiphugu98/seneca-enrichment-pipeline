@@ -40,6 +40,19 @@
 
   .banner{border-left:2px solid var(--gold);padding:12px 0 12px 16px;margin:0 0 30px;max-width:92ch;font-size:14.5px;color:var(--fg-dim);font-weight:300;line-height:1.6}
   .banner strong{color:var(--fg)}
+  .banner.vi{border-color:var(--violet)}
+
+  /* ── page nav ───────────────────────────────── */
+  .pagenav{display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap}
+  .pagenav button{background:var(--ink-2);border:1px solid var(--line-2);color:var(--fg-dim);
+    padding:9px 16px;border-radius:999px;cursor:pointer;font-family:var(--font);
+    font-size:13px;font-weight:600;letter-spacing:.02em;transition:.15s;display:flex;align-items:center;gap:8px}
+  .pagenav button:hover{border-color:var(--sky);color:var(--fg)}
+  .pagenav button.active{background:var(--sky);border-color:var(--sky);color:#0b1220}
+  .pagenav .num{font-family:var(--serif);font-size:15px;opacity:.8}
+  .page{display:none;animation:fade .3s ease}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
   .sectionhead{font-family:var(--serif);font-size:22px;font-weight:600;margin:38px 0 6px}
   .sectionhead .n{color:var(--fg-mute);font-size:15px;margin-right:8px}
@@ -86,6 +99,7 @@
   .tag.cheap{color:var(--sky);background:rgba(90,169,255,.09);border:1px solid rgba(90,169,255,.35)}
   .tag.mid{color:var(--gold);background:rgba(245,196,81,.09);border:1px solid rgba(245,196,81,.35)}
   .tag.human{color:var(--rose);background:rgba(251,113,133,.09);border:1px solid rgba(251,113,133,.35)}
+  .tag.prem{color:var(--violet);background:rgba(183,156,255,.09);border:1px solid rgba(183,156,255,.4)}
 
   /* vendor rows inside a stage */
   .vrows{display:flex;flex-direction:column;gap:8px;margin-top:12px}
@@ -166,6 +180,13 @@
 </head>
 <body>
 <div class="wrap">
+
+  <div class="pagenav">
+    <button id="nav1" class="active" onclick="go(1)"><span class="num">Ⅰ</span> Today — the lean stack</button>
+    <button id="nav2" onclick="go(2)"><span class="num">Ⅱ</span> Unlimited budget — the reliability ceiling</button>
+  </div>
+
+  <div class="page active" id="page1">
 
   <div class="kicker">Seneca · Growth OS — Layer 1</div>
   <h1>The Enrichment Pipeline</h1>
@@ -338,6 +359,163 @@
     <b>Open question for the team:</b> Dylan mentioned existing access to a property-records source — which one? The pipeline slots in <b>whatever is already paid for</b> at Stage 2; nothing here requires a new platform, and the whole flow runs on GHL webhooks + custom fields the team already lives in. <b>Compliance note:</b> skip-trace / identity data is for internal lead qualification only (GLBA/DPPA permissible-use terms apply) — it never auto-sends anything to a lead; a human approves all outbound.
   </div>
 
+  </div><!-- /page1 -->
+
+  <!-- ═════════════════════ PAGE 2 — UNLIMITED BUDGET ═════════════════════ -->
+  <div class="page" id="page2">
+
+  <div class="kicker" style="color:var(--violet)">Seneca · Growth OS — Layer 1 · Scenario B</div>
+  <h1>Same Pipeline, Unlimited Budget</h1>
+  <p class="lead">Nothing about the <b>architecture</b> changes — that's the point of designing in stages. With real budget, every slot upgrades to the <b>most reliable source in its category</b>: title-plant-grade property data, credit-header-grade identity, automated LLC piercing. And the system flips from <b>reactive</b> (enrich leads that arrive) to <b>proactive</b> (build the list of everyone who <em>should</em> be a lead).</p>
+
+  <div class="banner vi"><strong>Why show both:</strong> the lean stack proves ROI on inbound leads first; contracts follow evidence, not hope. This page is the <strong>ceiling the same design grows into</strong> — swap vendors in a slot, never redesign the system. The human-approval gate never gets bought out of the loop.</div>
+
+  <div class="stats">
+    <div class="stat v"><div class="big">99.9%</div><div class="cap">of US properties covered by <b>Cotality</b> (formerly CoreLogic) — the largest property data company.</div></div>
+    <div class="stat s"><div class="big">7B+</div><div class="cap">recorded document images in <b>First American DataTree</b> — title-plant grade, 100% of US housing stock.</div></div>
+    <div class="stat g"><div class="big">84B+</div><div class="cap">public records behind <b>LexisNexis Accurint</b> — the identity graph collections & law firms run on.</div></div>
+    <div class="stat"><div class="big">Reactive → Proactive</div><div class="cap">the real unlock: query the <b>whole TAM</b> of property owners instead of waiting for form fills.</div></div>
+  </div>
+
+  <h2 class="sectionhead"><span class="n">◆</span>The upgraded pipeline</h2>
+  <p class="sectionsub">Same five stages as Page Ⅰ. Stage 0 is untouched — <b>no budget buys a better source than the lead telling you directly.</b> Everything else moves to the top of its category.</p>
+
+  <div class="pipe">
+
+    <div class="stage s1">
+      <div class="rail"><span class="n">1</span><span class="t">Identity resolution</span><span class="cost">contract · credentialed</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Credit-header-grade identity <span class="tag prem">The gold standard</span></h3>
+        <p class="why">Instead of a four-vendor waterfall, one query against an <b>identity graph built on credit-header data</b> — the same infrastructure collections agencies, law firms, and insurers use. Match rates move from ~70–85% into the 90s, with <b>decades of address history</b> and relationship mapping (spouses, co-owners, associated entities) in the same response.</p>
+        <div class="vrows">
+          <div class="vrow">
+            <div class="vname">LexisNexis Accurint<small>identity graph</small></div>
+            <div class="vwhat"><b>84B+ public records</b>, LexID linking technology cross-referencing driver's licenses, property records, bankruptcies, professional licenses; handles nicknames and maiden names; link-analysis of people ↔ addresses ↔ entities.</div>
+            <div class="vprice">contract<small>credentialed access</small></div>
+          </div>
+          <div class="vrow">
+            <div class="vname">TransUnion TLOxp<small>the alternative</small></div>
+            <div class="vwhat">Real-time credit-header data, address history <b>going back decades</b>, carrier-identified phones, property + vehicle + business records, relationship visualization. Real-time API.</div>
+            <div class="vprice">contract<small>per-transaction</small></div>
+          </div>
+        </div>
+        <p class="why" style="margin-top:10px"><b>The catch money doesn't remove:</b> both require <b>credentialing and permissible-use vetting</b> (GLBA/DPPA) — site inspection, use-case approval, audit trail. That's a feature for a company touching tax data: it forces the governance story to be real.</p>
+        <div class="fields"><span class="field hot">verified_identity</span><span class="field hot">address_history</span><span class="field hot">linked_entities</span><span class="field">relationship_map</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">identity now resolves in one hop, not four</span></div></div>
+
+    <div class="stage s2">
+      <div class="rail"><span class="n">2</span><span class="t">Property data</span><span class="cost">dual-sourced contracts</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Title-plant-grade property data — dual-sourced <span class="tag prem">Cross-validated basis</span></h3>
+        <p class="why">Two independent top-tier sources so every <b>sale price and date is cross-validated</b> before it feeds a deduction estimate. When both agree, the estimate ships to review with high confidence; when they disagree, it's flagged — <b>data QA built into the pipe</b>.</p>
+        <div class="vrows">
+          <div class="vrow">
+            <div class="vname">Cotality<small>formerly CoreLogic</small></div>
+            <div class="vwhat"><b>99.9% of US properties</b> — the largest property dataset in the world. Ownership, characteristics, valuation (AVM), tax, transaction history.</div>
+            <div class="vprice">enterprise<small>annual contract</small></div>
+          </div>
+          <div class="vrow">
+            <div class="vname">First American DataTree<small>title-plant grade</small></div>
+            <div class="vwhat"><b>7B+ recorded document images</b>, 100% of US housing stock, ~150M property records with 200+ attributes; 50+ years of title-plant discipline — <b>100% of documents per county collected, indexed, verified</b>. The actual deed image is available when a study needs it.</div>
+            <div class="vprice">enterprise<small>annual contract</small></div>
+          </div>
+        </div>
+        <div class="fields"><span class="field hot">basis_validated</span><span class="field hot">deed_image_url</span><span class="field">avm_value</span><span class="field">tax_history_full</span><span class="field">source_agreement</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">the layer that matters most for cost seg — commercial & LLC-held property</span></div></div>
+
+    <div class="stage s3">
+      <div class="rail"><span class="n">3</span><span class="t">Entity + LLC piercing</span><span class="cost">credits + per-lookup</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Automated corporate-veil piercing <span class="tag prem">Replaces manual SoS digging</span></h3>
+        <p class="why">On Page Ⅰ this stage is manual Secretary-of-State searches. With budget, it's a button:</p>
+        <div class="vrows">
+          <div class="vrow">
+            <div class="vname">Reonomy TrueOwner<small>Altus Group</small></div>
+            <div class="vwhat"><b>54M+ US commercial properties</b>; AI pierces chains of LLCs and holding companies to the <b>individuals behind them</b> — with phone, email, and mailing address. Direct integrations with all 3,100 county assessors + Secretaries of State; data partnerships with Cotality and ICE. Unlock credits per owner.</div>
+            <div class="vprice">subscription<small>+ unlock credits</small></div>
+          </div>
+          <div class="vrow">
+            <div class="vname">Middesk<small>entity verification</small></div>
+            <div class="vwhat">Direct pipelines to <b>every Secretary of State + the IRS</b> — 100% of US businesses, <b>92% of records updated within 10 days</b>. Officers, registrations, TIN verification. Compliance-grade confirmation of who owns the entity.</div>
+            <div class="vprice">~$1+<small>per lookup</small></div>
+          </div>
+        </div>
+        <p class="why" style="margin-top:10px"><b>Payoff for cost seg specifically:</b> the biggest studies hide behind entities. A Gmail lead resolving to <em>three LLCs holding six commercial properties</em> stops being a lucky find and becomes a <b>systematic output</b>.</p>
+        <div class="fields"><span class="field hot">true_owner</span><span class="field hot">entity_portfolio</span><span class="field hot">est_deduction_portfolio</span><span class="field">officer_verified</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">and the strategic flip — enrichment becomes demand generation</span></div></div>
+
+    <div class="stage s0">
+      <div class="rail"><span class="n">4</span><span class="t">Proactive TAM</span><span class="cost">the real unlock</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>Stop waiting for leads — query the whole market <span class="tag free">Reactive → proactive</span></h3>
+        <p class="why">With Cotality + Reonomy under contract, the same pipeline runs <b>in reverse</b>: <em>"every owner who acquired investment property with basis &gt; $500k in the last 24 months, in the states where Seneca converts best"</em> — that's a query, not a wish. The output feeds three growth-marketing engines:</p>
+        <p class="why"><b>1. Outbound lists</b> for the partner/CPA channel and BD — pre-scored, pre-enriched, deduction pre-estimated. <b>2. Lookalike & custom audiences</b> for Meta/Google seeded from verified high-basis owners instead of pixel guesswork. <b>3. Market sizing</b> — actual TAM per state and property type, so the kill/scale/watch brief allocates spend against measured opportunity.</p>
+        <div class="fields"><span class="field hot">tam_segment</span><span class="field hot">audience_seed</span><span class="field">state_tam_rank</span></div>
+      </div></div>
+    </div>
+
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">one thing money never buys out of the loop</span></div></div>
+
+    <div class="stage s4">
+      <div class="rail"><span class="n">5</span><span class="t">Human gate</span><span class="cost">unchanged</span></div>
+      <div class="cardarea"><div class="scard">
+        <h3>GHL is still the surface; a human still decides <span class="tag human">AI proposes · human decides</span></h3>
+        <p class="why">Even at this tier, everything lands in the <b>same GHL custom fields</b> — the team's workflow doesn't change, only the fill-rate and confidence of the fields do. (If the data estate grows to several contracts, a warehouse layer like <b>Cherre</b> — entity resolution across 150+ data partners into one golden record — becomes the single source of truth <em>under</em> GHL. That's a scale decision, not a day-one one.) <b>Every estimate, every outbound list, every audience: reviewed and approved by a person before it touches a customer.</b></p>
+      </div></div>
+    </div>
+
+  </div>
+
+  <!-- lean vs unlimited comparison -->
+  <h2 class="sectionhead"><span class="n">⇄</span>What the money actually buys</h2>
+  <p class="sectionsub">Same stages, same GHL fields, same human gate. Budget buys <b>match rate, validation, and the proactive flip</b> — not a different design.</p>
+  <table class="tbl">
+    <tr><th>Stage</th><th>Page Ⅰ — lean (today)</th><th>Page Ⅱ — unlimited</th><th>What improves</th></tr>
+    <tr><td>Identity</td><td>Twilio → Trestle → Endato → PDL waterfall, $0.01–0.28/lead</td><td><b>LexisNexis Accurint / TLOxp</b>, contract</td><td>~70–85% → <b>90%+</b> match; address history + relationship maps</td></tr>
+    <tr><td>Property</td><td>RentCast $74/mo (150M records)</td><td><b>Cotality + DataTree</b>, dual-sourced</td><td>99.9% coverage; <b>cross-validated basis</b>; deed images on demand</td></tr>
+    <tr><td>Entity / LLC</td><td>Manual state SoS searches (free)</td><td><b>Reonomy TrueOwner + Middesk</b></td><td>LLC piercing automated; verified officer contacts</td></tr>
+    <tr><td>Posture</td><td>Reactive — enrich inbound only</td><td><b>Proactive — query the TAM</b></td><td>Outbound lists, seeded ad audiences, real market sizing</td></tr>
+    <tr><td>Cost / lead</td><td>~$0.12–0.60</td><td>~$2–5 + annual contracts</td><td>Still ~0.003% of one $171k avg deduction</td></tr>
+    <tr><td>Human gate</td><td colspan="2" style="text-align:center"><b>Identical — a person approves everything customer-facing</b></td><td>Non-negotiable at any budget</td></tr>
+  </table>
+
+  <!-- sources -->
+  <h2 class="sectionhead"><span class="n">✓</span>Sources — Page Ⅱ claims</h2>
+  <table class="tbl">
+    <tr><th>Claim</th><th>Verified figure</th><th>Source</th></tr>
+    <tr><td>Cotality</td><td>CoreLogic rebranded to Cotality (Mar 2025); covers <b>99.9% of US properties</b>, largest property data company</td><td><a href="https://www.cotality.com/press-releases/meet-cotality">cotality.com — press release</a> · <a href="https://www.housingwire.com/articles/corelogic-rebrands-to-cotality-to-reflect-its-evolution/">HousingWire</a></td></tr>
+    <tr><td>First American DataTree</td><td><b>7B+ recorded document images</b>; 100% of US housing stock; ~150M property records, 200+ attributes; title-plant lineage 50+ yrs</td><td><a href="https://www.firstam.com/mortgagesolutions/solutions/data-analytics/datatree.html">firstam.com — DataTree</a> · <a href="https://dna.firstam.com/all-data">dna.firstam.com</a></td></tr>
+    <tr><td>LexisNexis Accurint</td><td><b>84B+ public records</b>; LexID linking; nickname/maiden-name algorithms; link analysis; credentialed access</td><td><a href="https://risk.lexisnexis.com/collections-and-recovery/skip-tracing">risk.lexisnexis.com — skip tracing</a></td></tr>
+    <tr><td>TransUnion TLOxp</td><td>Real-time credit-header data; decades of address history; relationship mapping; real-time API</td><td><a href="https://skiptraceservices.com/blog/top-10-databases.html">skiptraceservices.com — database comparison</a></td></tr>
+    <tr><td>Reonomy</td><td><b>54M+ commercial properties</b>; TrueOwner AI pierces LLC chains to individuals w/ contact info; integrations with all 3,100 county assessors + SoS; Cotality & ICE partnerships</td><td><a href="https://www.reonomy.com/">reonomy.com</a> · <a href="https://www.reonomy.com/platform/reonomy-true-owner">TrueOwner</a></td></tr>
+    <tr><td>Middesk</td><td>Direct pipelines to <b>every SoS + IRS</b>; 100% of US businesses; <b>92% of records updated within 10 days</b>; ~$1+/lookup</td><td><a href="https://www.middesk.com/blog/secretary-of-state-api">middesk.com — SoS API</a> · <a href="https://opensosdata.com/vs/middesk/">pricing comparison</a></td></tr>
+    <tr><td>Cherre</td><td>Entity-resolution data platform; <b>150+ data & application partnerships</b>; unifies internal + external sources into one record</td><td><a href="https://cherre.com/products/platform/">cherre.com — platform</a></td></tr>
+  </table>
+
+  <div class="foot">
+    <b>The honest recommendation:</b> nobody should start here. Page Ⅰ proves the mechanism on inbound leads for under a dollar a lead; the weekly kill/scale/watch brief then makes the case for each upgrade <b>with conversion data, not vendor brochures</b>. The architecture is designed so that day — whenever it comes — is a vendor swap, not a rebuild.
+  </div>
+
+  </div><!-- /page2 -->
+
 </div>
+<script>
+function go(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.pagenav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page'+n).classList.add('active');
+  document.getElementById('nav'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
 </body>
 </html>
