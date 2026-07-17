@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Lead Enrichment Pipeline — Seneca · Khosi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap">
 <style>
   :root{
     --ink:#0b1220; --ink-2:#111a2b; --ink-3:#18243a;
@@ -15,7 +18,6 @@
     --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --serif:"Fraunces","Georgia",serif;
   }
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:var(--font); color:var(--fg); line-height:1.5;
@@ -82,6 +84,7 @@
   .stage.s2 .rail .n{color:var(--gold)}    .stage.s2 .rail{border-color:rgba(245,196,81,.4)}
   .stage.s3 .rail .n{color:var(--violet)}  .stage.s3 .rail{border-color:rgba(183,156,255,.4)}
   .stage.s4 .rail .n{color:var(--rose)}    .stage.s4 .rail{border-color:rgba(251,113,133,.4)}
+  .stage.s5 .rail .n{color:var(--gold)}    .stage.s5 .rail{border-color:rgba(245,196,81,.4)}
 
   .stage .cardarea{padding:8px 0 8px}
   .scard{background:linear-gradient(180deg,var(--ink-2),var(--ink-3));border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow)}
@@ -93,6 +96,7 @@
   .stage.s2 .scard{border-color:rgba(245,196,81,.28)}
   .stage.s3 .scard{border-color:rgba(183,156,255,.28)}
   .stage.s4 .scard{border-color:rgba(251,113,133,.28)}
+  .stage.s5 .scard{border-color:rgba(245,196,81,.28)}
 
   .tag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap}
   .tag.free{color:var(--emerald);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.35)}
@@ -158,10 +162,10 @@
   /* cost bar */
   .alloc{display:flex;border-radius:12px;overflow:hidden;margin:14px 0 4px;border:1px solid var(--line-2);height:66px}
   .alloc div{display:flex;flex-direction:column;justify-content:center;padding:0 16px;color:#0b1220;font-weight:700;min-width:0}
-  .alloc .c1{background:linear-gradient(180deg,#34d399,#0f9d68);flex:0 0 18%}
-  .alloc .c2{background:linear-gradient(180deg,#5aa9ff,#3b82f6);flex:0 0 44%}
-  .alloc .c3{background:linear-gradient(180deg,#f5c451,#e0a92e);flex:0 0 26%}
-  .alloc .c4{background:linear-gradient(180deg,#b79cff,#8b6ee8);flex:0 0 12%}
+  .alloc .c1{background:linear-gradient(180deg,#34d399,#0f9d68);flex:0 0 10%}
+  .alloc .c2{background:linear-gradient(180deg,#5aa9ff,#3b82f6);flex:0 0 56%}
+  .alloc .c3{background:linear-gradient(180deg,#f5c451,#e0a92e);flex:0 0 24%}
+  .alloc .c4{background:linear-gradient(180deg,#b79cff,#8b6ee8);flex:0 0 10%}
   .alloc .pct{font-family:var(--serif);font-size:17px;line-height:1.1;white-space:nowrap}
   .alloc .lb{font-size:10px;font-weight:700;letter-spacing:.03em;opacity:.85;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .allocnote{font-size:12.5px;color:var(--fg-mute);margin-top:8px;line-height:1.6;max-width:95ch}
@@ -197,9 +201,9 @@
   <!-- headline stats -->
   <div class="stats">
     <div class="stat s"><div class="big">3 fields</div><div class="cap">is all we need to start — <b>name, email, phone</b>. Address is a bonus, not a requirement.</div></div>
-    <div class="stat"><div class="big">~$0.20–0.60</div><div class="cap">realistic <b>all-in cost per enriched lead</b>, waterfall-priced, misses mostly free.</div></div>
-    <div class="stat g"><div class="big">3,144</div><div class="cap">US counties, each its own "deeds office." <b>No national registry</b> — which is why aggregators exist.</div></div>
-    <div class="stat v"><div class="big">$171k</div><div class="cap">Seneca's average deduction. Enrichment cost is <b>~0.0003%</b> of the value of one converted lead.</div></div>
+    <div class="stat"><div class="big">~$0.12–0.40</div><div class="cap">typical <b>all-in cost per enriched lead</b> (up to ~$0.70 if a lead cascades through every charged tier).</div></div>
+    <div class="stat g"><div class="big">3,144</div><div class="cap">US counties &amp; equivalents, served by <b>3,000+ recorder offices</b>. No national registry — which is why aggregators exist.</div></div>
+    <div class="stat v"><div class="big">$171k</div><div class="cap">Seneca's average deduction. Even worst-case enrichment cost is <b>~0.0004%</b> of one average deduction.</div></div>
   </div>
 
   <!-- ────────── WHAT COMES IN ────────── -->
@@ -239,7 +243,7 @@
         <div class="vrows">
           <div class="vrow">
             <div class="vname">Twilio Lookup<small>gate + caller name</small></div>
-            <div class="vwhat">Line-type check filters VoIP/burner junk (<b>$0.008</b>); Caller Name confirms the lead is who they say (<b>$0.01</b>). Also raises answer rates for sales.</div>
+            <div class="vwhat">Line-type check filters VoIP/burner junk (<b>$0.008</b>); Caller Name cross-checks the submitted name (<b>$0.01</b>; coverage is patchier on mobiles). Also raises answer rates for sales.</div>
             <div class="vprice">$0.008–0.01<small>per request</small></div>
           </div>
           <div class="wfall">no confident match — escalate</div>
@@ -251,8 +255,8 @@
           <div class="wfall">still no address — escalate</div>
           <div class="vrow">
             <div class="vname">Endato / EnformionGO<small>skip-trace API</small></div>
-            <div class="vwhat">Pass name + phone + email together → returns <b>full/partial address, phones, emails</b>. This is the skip-tracing infrastructure real-estate investors already use on this exact population. Pay per match only.</div>
-            <div class="vprice">$0.10<small>per match</small></div>
+            <div class="vwhat">Pass name + phone + email together → returns <b>full/partial address, phones, emails</b>. This is the skip-tracing infrastructure real-estate investors already use on this exact population. Pay per match only; volume pricing drops well below list.</div>
+            <div class="vprice">from $0.25<small>per match (Starter)</small></div>
           </div>
           <div class="wfall">last resort for high-value leads</div>
           <div class="vrow">
@@ -265,26 +269,26 @@
       </div></div>
     </div>
 
-    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">~70–85% of leads now have an address or a confident name + state</span></div></div>
+    <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">est. 70–85% of leads now have an address or a confident name + state <b>(internal estimate — validate on the first 100 leads)</b></span></div></div>
 
     <div class="stage s2">
-      <div class="rail"><span class="n">2</span><span class="t">Property lookup</span><span class="cost">~$0.03–0.10 / lead</span></div>
+      <div class="rail"><span class="n">2</span><span class="t">Property lookup</span><span class="cost">~$0.04–0.07 / lead</span></div>
       <div class="cardarea"><div class="scard">
         <h3>Address or owner name → the property record <span class="tag mid">County assessor + recorder data</span></h3>
         <div class="def">The <span class="term">"deeds office"</span> Dylan mentioned: in the US there's <b>no national deeds registry</b> — each of the <b>3,144 counties</b> runs its own <span class="term">County Recorder of Deeds</span> (deeds, mortgages, sale prices) and <span class="term">County Assessor</span> (values, tax, characteristics). All public record. Aggregators license and normalize it nationally — <b>ATTOM alone covers recorder data from 2,690+ counties</b>. If Seneca "has access" to one, it's almost certainly PropStream, ATTOM, or DataTree — I'd build on whichever is already paid for.</div>
         <div class="fork">
           <div class="branch yes"><div class="bt">✓ Have an address</div><p><b>Direct lookup:</b> owner, year built, sqft, property type, assessed value, tax history, <b>last sale price + date</b>.</p></div>
-          <div class="branch no"><div class="bt">✗ Only name + state</div><p><b>Owner-name search:</b> pull <b>every property this person owns</b> in the state — crucial because the lead's <em>home</em> address is often not the <em>investment</em> property. Area code + IP geo narrow the state.</p></div>
+          <div class="branch no"><div class="bt">✗ Only name + state</div><p><b>Owner-name search:</b> pull <b>every property this person owns</b> in the state — crucial because the lead's <em>home</em> address is often not the <em>investment</em> property. IP geolocation at form-fill narrows the state (area codes are weak proxies — US numbers are portable).</p></div>
         </div>
         <div class="vrows">
           <div class="vrow">
             <div class="vname">RentCast API<small>the lean-team pick</small></div>
             <div class="vwhat">150M+ properties, owner details, tax/assessment history, sale history. <b>Free dev tier (50 req/mo)</b> → $74/mo for 1,000 → $199/mo for 5,000. Real API, no contract — right-sized for current lead volume.</div>
-            <div class="vprice">from $74/mo<small>≈ $0.03–0.07 / lookup</small></div>
+            <div class="vprice">from $74/mo<small>≈ $0.04–0.07 / lookup</small></div>
           </div>
           <div class="vrow">
             <div class="vname">PropStream<small>likely already in-house</small></div>
-            <div class="vwhat">$99/mo Essentials, nationwide records, <b>owner-name search</b>, 10k exports/mo, built-in skip tracing at $0.12–0.15/record. UI + exports rather than a true API — fine for a VA-assisted or batch workflow.</div>
+            <div class="vwhat">$99/mo Essentials, nationwide records, <b>owner-name search</b>, 25k saves &amp; exports/mo, built-in skip tracing at $0.10–0.12/record. UI + exports rather than a true API — fine for a VA-assisted or batch workflow.</div>
             <div class="vprice">$99/mo<small>essentials plan</small></div>
           </div>
           <div class="vrow">
@@ -294,8 +298,8 @@
           </div>
           <div class="vrow dim">
             <div class="vname">BatchData<small>only at real scale</small></div>
-            <div class="vwhat">Excellent data but plans start ~<b>$1k–2k/mo for 100k records</b> ($0.02/record). Wrong shape for current volume — revisit if lead flow 10×'s.</div>
-            <div class="vprice">$1k+/mo<small>volume plans</small></div>
+            <div class="vwhat">Excellent data but plans start at <b>$2,000/mo for 100k records</b> ($0.02/record). Wrong shape for current volume — revisit if lead flow 10×'s.</div>
+            <div class="vprice">$2k+/mo<small>volume plans</small></div>
           </div>
         </div>
         <div class="fields"><span class="field hot">property_type</span><span class="field hot">assessed_value</span><span class="field hot">last_sale_price</span><span class="field hot">last_sale_date</span><span class="field">year_built</span><span class="field">sqft</span><span class="field">portfolio_count</span></div>
@@ -320,7 +324,7 @@
       <div class="rail"><span class="n">4</span><span class="t">GHL write-back</span><span class="cost">human-gated</span></div>
       <div class="cardarea"><div class="scard">
         <h3>Structured fields → scoring → routing → human approval <span class="tag human">AI proposes · human decides</span></h3>
-        <p class="why">GHL inbound webhook fires on new lead → the waterfall runs (a small middleware service or Make/n8n scenario) → results written to <b>GHL custom fields</b> via API. From there it's native GHL: a <b>fit × readiness score</b> routes the lead — high-fit to sales <em>with the context card</em>, mid-fit into the segmented nurture that <b>feeds the existing nurture AI better inputs</b>, junk (VoIP/no-match/no-property) suppressed so nobody wastes a dial. <b>Every estimated deduction is reviewed by a human before it appears in anything a lead sees.</b></p>
+        <p class="why">GHL fires an outbound webhook on new lead → the waterfall runs (a small middleware service or Make/n8n scenario) → results written back to <b>GHL custom fields</b> via the v2 API. From there it's native GHL: a <b>fit × readiness score</b> routes the lead — high-fit to sales <em>with the context card</em>, mid-fit into the segmented nurture that <b>feeds the existing nurture AI better inputs</b>, junk (VoIP/no-match/no-property) suppressed so nobody wastes a dial. <b>Every estimated deduction is reviewed by a human before it appears in anything a lead sees.</b></p>
         <div class="fields"><span class="field hot">lead_score</span><span class="field hot">route</span><span class="field">reviewed_by</span><span class="field">suppress_reason</span></div>
       </div></div>
     </div>
@@ -333,10 +337,10 @@
   <div class="alloc">
     <div class="c1"><span class="pct">$0.02</span><span class="lb">Phone gate</span></div>
     <div class="c2"><span class="pct">$0.07–0.28</span><span class="lb">Identity waterfall</span></div>
-    <div class="c3"><span class="pct">$0.03–0.10</span><span class="lb">Property lookup</span></div>
+    <div class="c3"><span class="pct">$0.04–0.07</span><span class="lb">Property lookup</span></div>
     <div class="c4"><span class="pct">~$0</span><span class="lb">Entity/SoS</span></div>
   </div>
-  <p class="allocnote"><b>≈ $0.12–0.40 typical, ~$0.60 absolute worst case</b> — against a service whose <b>average deduction is $171k</b>. If enrichment lifts lead→booked-call conversion by even a single point, it pays for itself thousands of times over. Fixed floor: RentCast $74/mo + (optionally) PropStream $99/mo already in-house.</p>
+  <p class="allocnote"><b>≈ $0.12–0.40 typical; ~$0.70 absolute worst case</b> if a lead cascades through every <em>charged</em> tier (Trestle query + Endato match + PDL match). Bar is schematic, not to scale. Against a service whose <b>average deduction is $171k</b>, if enrichment lifts lead→booked-call conversion by even a single point, it pays for itself thousands of times over. Fixed floor: RentCast $74/mo + (optionally) PropStream $99/mo already in-house.</p>
 
   <!-- ────────── SOURCES ────────── -->
   <h2 class="sectionhead"><span class="n">✓</span>Sources — every number above, verified</h2>
@@ -345,18 +349,18 @@
     <tr><th>Claim</th><th>Verified figure</th><th>Source</th></tr>
     <tr><td>Twilio Lookup</td><td>Line Type Intelligence <b>$0.008</b>/req · Caller Name <b>$0.01</b>/req · basic validation free</td><td><a href="https://www.twilio.com/en-us/user-authentication-identity/pricing/lookup">twilio.com — Lookup pricing</a></td></tr>
     <tr><td>Trestle</td><td>Reverse Phone <b>$0.07</b>/query · Phone Validation $0.015 · Real Contact $0.03 (self-serve)</td><td><a href="https://trestleiq.com/pricing/">trestleiq.com/pricing</a></td></tr>
-    <tr><td>Endato / EnformionGO</td><td>Contact enrichment <b>$0.10 per match</b>, no minimums or contracts; returns name, phone, email, full/partial address</td><td><a href="https://endato.com/pricing/">endato.com/pricing</a></td></tr>
+    <tr><td>Endato / EnformionGO</td><td>Contact enrichment <b>from $0.25 per match</b> (Starter; volume pricing as low as ~$0.01), no minimums or contracts; returns name, phone, email, full/partial address</td><td><a href="https://go.enformion.com/pricing/">go.enformion.com/pricing</a></td></tr>
     <tr><td>People Data Labs</td><td><b>$0.28/credit</b> Pro tier (as low as $0.20 annual); billed on successful match only; 100 free/mo</td><td><a href="https://www.peopledatalabs.com/pricing/person">peopledatalabs.com/pricing</a></td></tr>
     <tr><td>RentCast API</td><td>Free 50 req/mo · <b>$74/mo → 1,000</b> · $199/mo → 5,000 · $449/mo → 25,000; 150M+ properties, owner details, tax + sale history</td><td><a href="https://www.rentcast.io/api">rentcast.io/api</a></td></tr>
-    <tr><td>PropStream</td><td>Essentials <b>$99/mo</b> (10k exports) · Pro $199 · skip tracing <b>$0.12–0.15/record</b></td><td><a href="https://www.propstream.com/pricing">propstream.com/pricing</a></td></tr>
+    <tr><td>PropStream</td><td>Essentials <b>$99/mo</b> (25k saves &amp; exports) · Pro $199 · skip tracing <b>$0.10–0.12/record</b></td><td><a href="https://www.propstream.com/pricing">propstream.com/pricing</a></td></tr>
     <tr><td>ATTOM Data</td><td>158M properties; assessor + recorder + <b>owner-name search</b>; recorder data from <b>2,690+ counties</b>; 30-day API trial; enterprise pricing</td><td><a href="https://www.attomdata.com/data/property-ownership-data/owner-names/">attomdata.com — owner names</a> · <a href="https://www.attomdata.com/data/transactions-mortgage-data/recorder-data/">recorder data</a></td></tr>
-    <tr><td>BatchData</td><td>Skip-trace plans from <b>~$1,000–2,000/mo for 100k records</b> ($0.02/rec, down to $0.0066 at 3M)</td><td><a href="https://batchdata.io/pricing">batchdata.io/pricing</a></td></tr>
+    <tr><td>BatchData</td><td>Skip-trace plans from <b>$2,000/mo for 100k records</b> ($0.02/rec, down to ~$0.0067 at 3M)</td><td><a href="https://batchdata.io/pricing">batchdata.io/pricing</a></td></tr>
     <tr><td>County system</td><td><b>3,144 counties</b> & equivalents; <b>3,000+ recorder offices</b>; no national registry; records are public</td><td><a href="https://www.levelset.com/mechanics-lien/all-usa-county-recorders-offices/">levelset.com — county recorders</a> · <a href="https://www.countyoffice.org/recorder-of-deeds/">countyoffice.org</a></td></tr>
     <tr><td>LLC lookup</td><td>State Secretary of State searches <b>free</b>; OpenCorporates commercial API from <b>£2,250/yr</b></td><td><a href="https://opencorporates.com/pricing/">opencorporates.com/pricing</a></td></tr>
   </table>
 
   <div class="foot">
-    <b>Open question for the team:</b> Dylan mentioned existing access to a property-records source — which one? The pipeline slots in <b>whatever is already paid for</b> at Stage 2; nothing here requires a new platform, and the whole flow runs on GHL webhooks + custom fields the team already lives in. <b>Compliance note:</b> skip-trace / identity data is for internal lead qualification only (GLBA/DPPA permissible-use terms apply) — it never auto-sends anything to a lead; a human approves all outbound.
+    <b>Open question for the team:</b> Dylan mentioned existing access to a property-records source — which one? The pipeline slots in <b>whatever is already paid for</b> at Stage 2; nothing here requires a new platform, and the whole flow runs on GHL webhooks + custom fields the team already lives in. <b>Compliance note:</b> identity/skip-trace vendors are used under their marketing-permissible (non-GLBA/DPPA-restricted) data terms; all data is <b>non-FCRA</b> and is never used for credit, insurance, employment, or other eligibility decisions — only lead routing. Outreach goes only to the contact points the lead submitted; enriched phones/emails are for verification and scoring, never new outreach channels (TCPA/DNC). A human approves all outbound.
   </div>
 
   </div><!-- /page1 -->
@@ -371,14 +375,14 @@
   <div class="banner vi"><strong>Why show both:</strong> the lean stack proves ROI on inbound leads first; contracts follow evidence, not hope. This page is the <strong>ceiling the same design grows into</strong> — swap vendors in a slot, never redesign the system. The human-approval gate never gets bought out of the loop.</div>
 
   <div class="stats">
-    <div class="stat v"><div class="big">99.9%</div><div class="cap">of US properties covered by <b>Cotality</b> (formerly CoreLogic) — the largest property data company.</div></div>
+    <div class="stat v"><div class="big">99.9%</div><div class="cap">of US properties covered by <b>Cotality</b> (formerly CoreLogic) — one of the largest property-data companies.</div></div>
     <div class="stat s"><div class="big">7B+</div><div class="cap">recorded document images in <b>First American DataTree</b> — title-plant grade, 100% of US housing stock.</div></div>
     <div class="stat g"><div class="big">84B+</div><div class="cap">public records behind <b>LexisNexis Accurint</b> — the identity graph collections & law firms run on.</div></div>
     <div class="stat"><div class="big">Reactive → Proactive</div><div class="cap">the real unlock: query the <b>whole TAM</b> of property owners instead of waiting for form fills.</div></div>
   </div>
 
   <h2 class="sectionhead"><span class="n">◆</span>The upgraded pipeline</h2>
-  <p class="sectionsub">Same five stages as Page Ⅰ. Stage 0 is untouched — <b>no budget buys a better source than the lead telling you directly.</b> Everything else moves to the top of its category.</p>
+  <p class="sectionsub">Same architecture as Page Ⅰ, plus one <b>new</b> stage (4 — proactive TAM); the human gate moves to 5. Stage 0 is untouched — <b>no budget buys a better source than the lead telling you directly.</b> Everything else moves to the top of its category.</p>
 
   <div class="pipe">
 
@@ -386,11 +390,11 @@
       <div class="rail"><span class="n">1</span><span class="t">Identity resolution</span><span class="cost">contract · credentialed</span></div>
       <div class="cardarea"><div class="scard">
         <h3>Credit-header-grade identity <span class="tag prem">The gold standard</span></h3>
-        <p class="why">Instead of a four-vendor waterfall, one query against an <b>identity graph built on credit-header data</b> — the same infrastructure collections agencies, law firms, and insurers use. Match rates move from ~70–85% into the 90s, with <b>decades of address history</b> and relationship mapping (spouses, co-owners, associated entities) in the same response.</p>
+        <p class="why">Instead of a four-vendor waterfall, one query against an <b>identity graph built on credit-header data</b> — the same infrastructure collections agencies, law firms, and insurers use. Match rates move from est. ~70–85% into the 90s <em>(modeled — vendors publish no head-to-head figures)</em>, with <b>decades of address history</b> and relationship mapping (spouses, co-owners, associated entities) in the same response.</p>
         <div class="vrows">
           <div class="vrow">
             <div class="vname">LexisNexis Accurint<small>identity graph</small></div>
-            <div class="vwhat"><b>84B+ public records</b>, LexID linking technology cross-referencing driver's licenses, property records, bankruptcies, professional licenses; handles nicknames and maiden names; link-analysis of people ↔ addresses ↔ entities.</div>
+            <div class="vwhat"><b>84B+ public records</b> (newer LexisNexis pages cite 92B+), LexID linking technology cross-referencing driver's licenses, property records, bankruptcies, professional licenses; nickname and name-variation algorithms; link-analysis of people ↔ addresses ↔ entities.</div>
             <div class="vprice">contract<small>credentialed access</small></div>
           </div>
           <div class="vrow">
@@ -399,7 +403,7 @@
             <div class="vprice">contract<small>per-transaction</small></div>
           </div>
         </div>
-        <p class="why" style="margin-top:10px"><b>The catch money doesn't remove:</b> both require <b>credentialing and permissible-use vetting</b> (GLBA/DPPA) — site inspection, use-case approval, audit trail. That's a feature for a company touching tax data: it forces the governance story to be real.</p>
+        <p class="why" style="margin-top:10px"><b>The catch money doesn't remove:</b> both require <b>credentialing and permissible-use vetting</b> (GLBA/DPPA) — use-case approval, audit trail, and (for TLOxp) possible site inspection. Crucially, <b>marketing/lead-qualification is not a GLBA/DPPA permissible purpose</b>: prospecting use is approvable only against the <em>non-regulated</em> portions of these graphs, so the realistic uplift is smaller than the headline match rates. That constraint is a feature for a company touching tax data: it forces the governance story to be real.</p>
         <div class="fields"><span class="field hot">verified_identity</span><span class="field hot">address_history</span><span class="field hot">linked_entities</span><span class="field">relationship_map</span></div>
       </div></div>
     </div>
@@ -414,7 +418,7 @@
         <div class="vrows">
           <div class="vrow">
             <div class="vname">Cotality<small>formerly CoreLogic</small></div>
-            <div class="vwhat"><b>99.9% of US properties</b> — the largest property dataset in the world. Ownership, characteristics, valuation (AVM), tax, transaction history.</div>
+            <div class="vwhat"><b>99.9% of US properties</b> — the self-described largest property dataset in the world. Ownership, characteristics, valuation (AVM), tax, transaction history.</div>
             <div class="vprice">enterprise<small>annual contract</small></div>
           </div>
           <div class="vrow">
@@ -437,13 +441,13 @@
         <div class="vrows">
           <div class="vrow">
             <div class="vname">Reonomy TrueOwner<small>Altus Group</small></div>
-            <div class="vwhat"><b>54M+ US commercial properties</b>; AI pierces chains of LLCs and holding companies to the <b>individuals behind them</b> — with phone, email, and mailing address. Direct integrations with all 3,100 county assessors + Secretaries of State; data partnerships with Cotality and ICE. Unlock credits per owner.</div>
+            <div class="vwhat"><b>53M+ US commercial properties (54M+ parcels)</b>; AI pierces chains of LLCs and holding companies to the <b>individuals behind them</b> — with phone, email, and mailing address. Direct integrations with all 3,100 county assessors + Secretaries of State; data partnerships with Cotality and ICE. Unlock credits per owner.</div>
             <div class="vprice">subscription<small>+ unlock credits</small></div>
           </div>
           <div class="vrow">
             <div class="vname">Middesk<small>entity verification</small></div>
-            <div class="vwhat">Direct pipelines to <b>every Secretary of State + the IRS</b> — 100% of US businesses, <b>92% of records updated within 10 days</b>. Officers, registrations, TIN verification. Compliance-grade confirmation of who owns the entity.</div>
-            <div class="vprice">~$1+<small>per lookup</small></div>
+            <div class="vwhat">Direct Secretary-of-State connections in <b>all 51 US jurisdictions + IRS TIN matching</b> — 100% of <em>registered</em> US businesses, <b>92% of records updated within 10 days</b>. Officers, registrations, TIN verification. Compliance-grade confirmation of who owns the entity.</div>
+            <div class="vprice">~$1+<small>per lookup (est.)</small></div>
           </div>
         </div>
         <p class="why" style="margin-top:10px"><b>Payoff for cost seg specifically:</b> the biggest studies hide behind entities. A Gmail lead resolving to <em>three LLCs holding six commercial properties</em> stops being a lucky find and becomes a <b>systematic output</b>.</p>
@@ -453,12 +457,13 @@
 
     <div class="conn"><div class="spacer"></div><div class="arrow"><span class="down">▼</span><span class="note">and the strategic flip — enrichment becomes demand generation</span></div></div>
 
-    <div class="stage s0">
-      <div class="rail"><span class="n">4</span><span class="t">Proactive TAM</span><span class="cost">the real unlock</span></div>
+    <div class="stage s5">
+      <div class="rail"><span class="n">4</span><span class="t">Proactive TAM</span><span class="cost">new stage · needs contracts</span></div>
       <div class="cardarea"><div class="scard">
-        <h3>Stop waiting for leads — query the whole market <span class="tag free">Reactive → proactive</span></h3>
+        <h3>Stop waiting for leads — query the whole market <span class="tag prem">Reactive → proactive</span></h3>
         <p class="why">With Cotality + Reonomy under contract, the same pipeline runs <b>in reverse</b>: <em>"every owner who acquired investment property with basis &gt; $500k in the last 24 months, in the states where Seneca converts best"</em> — that's a query, not a wish. The output feeds three growth-marketing engines:</p>
-        <p class="why"><b>1. Outbound lists</b> for the partner/CPA channel and BD — pre-scored, pre-enriched, deduction pre-estimated. <b>2. Lookalike & custom audiences</b> for Meta/Google seeded from verified high-basis owners instead of pixel guesswork. <b>3. Market sizing</b> — actual TAM per state and property type, so the kill/scale/watch brief allocates spend against measured opportunity.</p>
+        <p class="why"><b>1. Outbound lists</b> for the partner/CPA channel and BD — pre-scored, pre-enriched, deduction pre-estimated. <b>2. Sharper Meta/Google targeting</b> — TAM insights (geo, property type, owner profile) shape campaigns; custom-audience uploads stay strictly first-party, per platform terms. <b>3. Market sizing</b> — actual TAM per state and property type, so the kill/scale/watch brief allocates spend against measured opportunity.</p>
+        <p class="why"><b>Consent guardrail:</b> proactive lists route only to compliant channels — direct mail, DNC-scrubbed manual calls, and the CPA/partner channel. No cold texts or autodialed calls (TCPA).</p>
         <div class="fields"><span class="field hot">tam_segment</span><span class="field hot">audience_seed</span><span class="field">state_tam_rank</span></div>
       </div></div>
     </div>
@@ -469,7 +474,7 @@
       <div class="rail"><span class="n">5</span><span class="t">Human gate</span><span class="cost">unchanged</span></div>
       <div class="cardarea"><div class="scard">
         <h3>GHL is still the surface; a human still decides <span class="tag human">AI proposes · human decides</span></h3>
-        <p class="why">Even at this tier, everything lands in the <b>same GHL custom fields</b> — the team's workflow doesn't change, only the fill-rate and confidence of the fields do. (If the data estate grows to several contracts, a warehouse layer like <b>Cherre</b> — entity resolution across 150+ data partners into one golden record — becomes the single source of truth <em>under</em> GHL. That's a scale decision, not a day-one one.) <b>Every estimate, every outbound list, every audience: reviewed and approved by a person before it touches a customer.</b></p>
+        <p class="why">Even at this tier, everything lands in the <b>same GHL custom fields</b> — the team's workflow doesn't change, only the fill-rate and confidence of the fields do. (If the data estate grows to several contracts, a warehouse layer like <b>Cherre</b> (reportedly now part of RealPage — verify before committing) — entity resolution across 150+ data partners into one golden record — becomes the single source of truth <em>under</em> GHL. That's a scale decision, not a day-one one.) <b>Every estimate, every outbound list, every audience: reviewed and approved by a person before it touches a customer.</b></p>
       </div></div>
     </div>
 
@@ -480,11 +485,11 @@
   <p class="sectionsub">Same stages, same GHL fields, same human gate. Budget buys <b>match rate, validation, and the proactive flip</b> — not a different design.</p>
   <table class="tbl">
     <tr><th>Stage</th><th>Page Ⅰ — lean (today)</th><th>Page Ⅱ — unlimited</th><th>What improves</th></tr>
-    <tr><td>Identity</td><td>Twilio → Trestle → Endato → PDL waterfall, $0.01–0.28/lead</td><td><b>LexisNexis Accurint / TLOxp</b>, contract</td><td>~70–85% → <b>90%+</b> match; address history + relationship maps</td></tr>
+    <tr><td>Identity</td><td>Twilio → Trestle → Endato → PDL waterfall, $0.01–0.28/lead</td><td><b>LexisNexis Accurint / TLOxp</b>, contract</td><td>est. ~70–85% → <b>90%+</b> match (modeled); address history + relationship maps</td></tr>
     <tr><td>Property</td><td>RentCast $74/mo (150M records)</td><td><b>Cotality + DataTree</b>, dual-sourced</td><td>99.9% coverage; <b>cross-validated basis</b>; deed images on demand</td></tr>
     <tr><td>Entity / LLC</td><td>Manual state SoS searches (free)</td><td><b>Reonomy TrueOwner + Middesk</b></td><td>LLC piercing automated; verified officer contacts</td></tr>
-    <tr><td>Posture</td><td>Reactive — enrich inbound only</td><td><b>Proactive — query the TAM</b></td><td>Outbound lists, seeded ad audiences, real market sizing</td></tr>
-    <tr><td>Cost / lead</td><td>~$0.12–0.60</td><td>~$2–5 + annual contracts</td><td>Still ~0.003% of one $171k avg deduction</td></tr>
+    <tr><td>Posture</td><td>Reactive — enrich inbound only</td><td><b>Proactive — query the TAM</b></td><td>Outbound lists (compliant channels), sharper ad targeting, real market sizing</td></tr>
+    <tr><td>Cost / lead</td><td>~$0.12–0.40 (to ~$0.70 worst case)</td><td>~$2–5 (modeled) + annual contracts</td><td>Still ~0.001–0.003% of one $171k avg deduction</td></tr>
     <tr><td>Human gate</td><td colspan="2" style="text-align:center"><b>Identical — a person approves everything customer-facing</b></td><td>Non-negotiable at any budget</td></tr>
   </table>
 
@@ -492,13 +497,13 @@
   <h2 class="sectionhead"><span class="n">✓</span>Sources — Page Ⅱ claims</h2>
   <table class="tbl">
     <tr><th>Claim</th><th>Verified figure</th><th>Source</th></tr>
-    <tr><td>Cotality</td><td>CoreLogic rebranded to Cotality (Mar 2025); covers <b>99.9% of US properties</b>, largest property data company</td><td><a href="https://www.cotality.com/press-releases/meet-cotality">cotality.com — press release</a> · <a href="https://www.housingwire.com/articles/corelogic-rebrands-to-cotality-to-reflect-its-evolution/">HousingWire</a></td></tr>
-    <tr><td>First American DataTree</td><td><b>7B+ recorded document images</b>; 100% of US housing stock; ~150M property records, 200+ attributes; title-plant lineage 50+ yrs</td><td><a href="https://www.firstam.com/mortgagesolutions/solutions/data-analytics/datatree.html">firstam.com — DataTree</a> · <a href="https://dna.firstam.com/all-data">dna.firstam.com</a></td></tr>
-    <tr><td>LexisNexis Accurint</td><td><b>84B+ public records</b>; LexID linking; nickname/maiden-name algorithms; link analysis; credentialed access</td><td><a href="https://risk.lexisnexis.com/collections-and-recovery/skip-tracing">risk.lexisnexis.com — skip tracing</a></td></tr>
-    <tr><td>TransUnion TLOxp</td><td>Real-time credit-header data; decades of address history; relationship mapping; real-time API</td><td><a href="https://skiptraceservices.com/blog/top-10-databases.html">skiptraceservices.com — database comparison</a></td></tr>
-    <tr><td>Reonomy</td><td><b>54M+ commercial properties</b>; TrueOwner AI pierces LLC chains to individuals w/ contact info; integrations with all 3,100 county assessors + SoS; Cotality & ICE partnerships</td><td><a href="https://www.reonomy.com/">reonomy.com</a> · <a href="https://www.reonomy.com/platform/reonomy-true-owner">TrueOwner</a></td></tr>
-    <tr><td>Middesk</td><td>Direct pipelines to <b>every SoS + IRS</b>; 100% of US businesses; <b>92% of records updated within 10 days</b>; ~$1+/lookup</td><td><a href="https://www.middesk.com/blog/secretary-of-state-api">middesk.com — SoS API</a> · <a href="https://opensosdata.com/vs/middesk/">pricing comparison</a></td></tr>
-    <tr><td>Cherre</td><td>Entity-resolution data platform; <b>150+ data & application partnerships</b>; unifies internal + external sources into one record</td><td><a href="https://cherre.com/products/platform/">cherre.com — platform</a></td></tr>
+    <tr><td>Cotality</td><td>CoreLogic rebranded to Cotality (Mar 2025); covers <b>99.9% of US properties</b> (self-described largest)</td><td><a href="https://www.cotality.com/our-data">cotality.com/our-data</a> · <a href="https://www.cotality.com/press-releases/meet-cotality">press release</a> · <a href="https://www.housingwire.com/articles/corelogic-rebrands-to-cotality-to-reflect-its-evolution/">HousingWire</a></td></tr>
+    <tr><td>First American DataTree</td><td><b>7B+ recorded document images</b> (newer materials cite 8B+); 100% of US housing stock; ~150M property records, 200+ attributes; title-plant lineage 50+ yrs</td><td><a href="https://dna.firstam.com/all-data">dna.firstam.com/all-data</a> · <a href="https://www.firstam.com/mortgagesolutions/solutions/data-analytics/datatree.html">firstam.com — DataTree</a></td></tr>
+    <tr><td>LexisNexis Accurint</td><td><b>84B+ public records</b> (newer pages cite 92B+); LexID linking; nickname/name-variation algorithms; link analysis; GLBA/DPPA-credentialed access</td><td><a href="https://risk.lexisnexis.com/collections-and-recovery/skip-tracing">risk.lexisnexis.com — skip tracing</a> · <a href="https://secure.accurint.com/bps/509/html/tcol/glb.html">accurint.com — GLBA permissible use</a></td></tr>
+    <tr><td>TransUnion TLOxp</td><td>Real-time credit-header data; decades of address history; relationship mapping; real-time API; credentialing may include site inspection</td><td><a href="https://www.transunion.com/business-needs/investigations-tloxp">transunion.com — TLOxp</a> · <a href="https://www.tlo.com/content/dam/tlo/us/documents/tlo-relationship-mapping-asset-sheet.pdf">relationship-mapping sheet (PDF)</a></td></tr>
+    <tr><td>Reonomy</td><td><b>53M+ commercial properties (54M+ parcels)</b>; TrueOwner AI pierces LLC chains to individuals w/ contact info; integrations with all 3,100 county assessors + SoS; Cotality &amp; ICE partnerships</td><td><a href="https://www.reonomy.com/">reonomy.com</a> · <a href="https://www.reonomy.com/platform/reonomy-true-owner">TrueOwner</a></td></tr>
+    <tr><td>Middesk</td><td>SoS connections in <b>all 51 US jurisdictions + IRS TIN matching</b>; 100% of registered US businesses; <b>92% updated within 10 days</b>; ~$1+/lookup (third-party est.)</td><td><a href="https://www.middesk.com/platform">middesk.com/platform</a> · <a href="https://www.middesk.com/blog/secretary-of-state-api">SoS API</a> · <a href="https://opensosdata.com/vs/middesk/">pricing comparison</a></td></tr>
+    <tr><td>Cherre</td><td>Entity-resolution data platform; <b>150+ data &amp; application partnerships</b>; unifies internal + external sources into one record; reportedly acquired by RealPage — verify status</td><td><a href="https://cherre.com/">cherre.com</a> · <a href="https://cherre.com/products/platform/">platform</a></td></tr>
   </table>
 
   <div class="foot">
